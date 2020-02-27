@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+
+import resource
+import subprocess
+import argparse
+
+parser = argparse.ArgumentParser(
+        description='Limit resources that a process can use')
+parser.add_argument('command', type=str, nargs='*',
+        help='The command you want to run, with arguments its arguments')
+parser.add_argument('--ram-mb', dest='ram', default=500, type=int,
+        help='The amount of ram that the process should use (in MB)')
+
+args = parser.parse_args()
+
+ram_in_bytes = 1000*1000*args.ram
+resource.setrlimit(resource.RLIMIT_AS, (ram_in_bytes, ram_in_bytes))
+result = subprocess.run(args.command, capture_output=True)
+
+print(result)
+
